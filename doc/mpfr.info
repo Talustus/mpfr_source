@@ -1,9 +1,9 @@
 This is mpfr.info, produced by makeinfo version 6.5 from mpfr.texi.
 
 This manual documents how to install and use the Multiple Precision
-Floating-Point Reliable Library, version 4.0.1.
+Floating-Point Reliable Library, version 4.0.0.
 
-   Copyright 1991, 1993-2018 Free Software Foundation, Inc.
+   Copyright 1991, 1993-2017 Free Software Foundation, Inc.
 
    Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.2 or
@@ -23,9 +23,9 @@ GNU MPFR
 ********
 
 This manual documents how to install and use the Multiple Precision
-Floating-Point Reliable Library, version 4.0.1.
+Floating-Point Reliable Library, version 4.0.0.
 
-   Copyright 1991, 1993-2018 Free Software Foundation, Inc.
+   Copyright 1991, 1993-2017 Free Software Foundation, Inc.
 
    Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.2 or
@@ -282,8 +282,8 @@ MPFR).  Problems are also mentioned in the FAQ
 <http://www.mpfr.org/faq.html>.
 
    Please report problems to the MPFR mailing-list ‘mpfr@inria.fr’.
-*Note Reporting Bugs::.  Some bug fixes are available on the MPFR 4.0.1
-web page <http://www.mpfr.org/mpfr-4.0.1/>.
+*Note Reporting Bugs::.  Some bug fixes are available on the MPFR 4.0.0
+web page <http://www.mpfr.org/mpfr-4.0.0/>.
 
 2.4 Getting the Latest Version of MPFR
 ======================================
@@ -298,7 +298,7 @@ File: mpfr.info,  Node: Reporting Bugs,  Next: MPFR Basics,  Prev: Installing MP
 ****************
 
 If you think you have found a bug in the MPFR library, first have a look
-on the MPFR 4.0.1 web page <http://www.mpfr.org/mpfr-4.0.1/> and the FAQ
+on the MPFR 4.0.0 web page <http://www.mpfr.org/mpfr-4.0.0/> and the FAQ
 <http://www.mpfr.org/faq.html>: perhaps this bug is already known, in
 which case you may find there a workaround for it.  You might also look
 in the archives of the MPFR mailing-list:
@@ -3125,20 +3125,19 @@ stack.
  -- Function: void mpfr_custom_init_set (mpfr_t X, int KIND, mpfr_exp_t
           EXP, mpfr_prec_t PREC, void *SIGNIFICAND)
      Perform a dummy initialization of a ‘mpfr_t’ and set it to:
-        • if abs(KIND) = ‘MPFR_NAN_KIND’, X is set to NaN;
-        • if abs(KIND) = ‘MPFR_INF_KIND’, X is set to the infinity of
-          the same sign as KIND;
-        • if abs(KIND) = ‘MPFR_ZERO_KIND’, X is set to the zero of the
-          same sign as KIND;
-        • if abs(KIND) = ‘MPFR_REGULAR_KIND’, X is set to the regular
-          number whose sign is the one of KIND, and whose exponent and
-          significand are given by EXP and SIGNIFICAND.
-     In all cases, SIGNIFICAND will be used directly for further
-     computing involving X.  This function does not allocate anything.
-     A floating-point number initialized with this function cannot be
-     resized using ‘mpfr_set_prec’ or ‘mpfr_prec_round’, or cleared
-     using ‘mpfr_clear’!  The SIGNIFICAND must have been initialized
-     with ‘mpfr_custom_init’ using the same precision PREC.
+        • if ‘ABS(kind) == MPFR_NAN_KIND’, X is set to NaN;
+        • if ‘ABS(kind) == MPFR_INF_KIND’, X is set to the infinity of
+          sign ‘sign(kind)’;
+        • if ‘ABS(kind) == MPFR_ZERO_KIND’, X is set to the zero of sign
+          ‘sign(kind)’;
+        • if ‘ABS(kind) == MPFR_REGULAR_KIND’, X is set to a regular
+          number: ‘x = sign(kind)*significand*2^exp’.
+     In all cases, it uses SIGNIFICAND directly for further computing
+     involving X.  It will not allocate anything.  A floating-point
+     number initialized with this function cannot be resized using
+     ‘mpfr_set_prec’ or ‘mpfr_prec_round’, or cleared using
+     ‘mpfr_clear’!  The SIGNIFICAND must have been initialized with
+     ‘mpfr_custom_init’ using the same precision PREC.
 
  -- Function: int mpfr_custom_get_kind (mpfr_t X)
      Return the current kind of a ‘mpfr_t’ as created by
@@ -3152,12 +3151,10 @@ stack.
 
  -- Function: mpfr_exp_t mpfr_custom_get_exp (mpfr_t X)
      Return the exponent of X, assuming that X is a non-zero ordinary
-     number and the significand is considered in [1/2,1).  But if X is
-     NaN, infinity or zero, contrary to ‘mpfr_get_exp’ (where the
-     behavior is undefined), the return value is here an unspecified,
-     valid value of the ‘mpfr_exp_t’ type.  The behavior of this
-     function for any ‘mpfr_t’ not initialized with
-     ‘mpfr_custom_init_set’ is undefined.
+     number.  The return value for NaN, Infinity or zero is unspecified
+     but does not produce any trap.  The behavior of this function for
+     any ‘mpfr_t’ not initialized with ‘mpfr_custom_init_set’ is
+     undefined.
 
  -- Function: void mpfr_custom_move (mpfr_t X, void *NEW_POSITION)
      Inform MPFR that the significand of X has moved due to a garbage
@@ -4416,13 +4413,13 @@ Function and Type Index
 * mpfr_coth:                             Special Functions.   (line 126)
 * mpfr_csc:                              Special Functions.   (line  61)
 * mpfr_csch:                             Special Functions.   (line 125)
-* mpfr_custom_get_exp:                   Custom Interface.    (line  76)
-* mpfr_custom_get_kind:                  Custom Interface.    (line  66)
-* mpfr_custom_get_significand:           Custom Interface.    (line  71)
+* mpfr_custom_get_exp:                   Custom Interface.    (line  75)
+* mpfr_custom_get_kind:                  Custom Interface.    (line  65)
+* mpfr_custom_get_significand:           Custom Interface.    (line  70)
 * mpfr_custom_get_size:                  Custom Interface.    (line  37)
 * mpfr_custom_init:                      Custom Interface.    (line  41)
 * mpfr_custom_init_set:                  Custom Interface.    (line  48)
-* mpfr_custom_move:                      Custom Interface.    (line  85)
+* mpfr_custom_move:                      Custom Interface.    (line  82)
 * MPFR_DECL_INIT:                        Initialization Functions.
                                                               (line  74)
 * mpfr_digamma:                          Special Functions.   (line 187)
@@ -4939,19 +4936,19 @@ Node: Miscellaneous Functions131001
 Node: Exception Related Functions141493
 Node: Compatibility with MPF151733
 Node: Custom Interface154679
-Node: Internals159310
-Node: API Compatibility160854
-Node: Type and Macro Changes162802
-Node: Added Functions165985
-Node: Changed Functions170499
-Node: Removed Functions177095
-Node: Other Changes177825
-Node: MPFR and the IEEE 754 Standard179526
-Node: Contributors182143
-Node: References185200
-Node: GNU Free Documentation License187084
-Node: Concept Index209677
-Node: Function and Type Index216049
+Node: Internals159078
+Node: API Compatibility160622
+Node: Type and Macro Changes162570
+Node: Added Functions165753
+Node: Changed Functions170267
+Node: Removed Functions176863
+Node: Other Changes177593
+Node: MPFR and the IEEE 754 Standard179294
+Node: Contributors181911
+Node: References184968
+Node: GNU Free Documentation License186852
+Node: Concept Index209445
+Node: Function and Type Index215817
 
 End Tag Table
 

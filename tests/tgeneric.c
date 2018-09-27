@@ -1,7 +1,7 @@
 /* Generic test file for functions with one or two arguments (the second being
    either mpfr_t or double or unsigned long).
 
-Copyright 2001-2018 Free Software Foundation, Inc.
+Copyright 2001-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -157,6 +157,7 @@ test_generic (mpfr_prec_t p0, mpfr_prec_t p1, unsigned int nmax)
   int inexact, compare, compare2;
   unsigned int n;
   unsigned long ctrt = 0, ctrn = 0;
+  int test_of = 1, test_uf = 1;
   mpfr_exp_t old_emin, old_emax;
 
   old_emin = mpfr_get_emin ();
@@ -170,12 +171,6 @@ test_generic (mpfr_prec_t p0, mpfr_prec_t p1, unsigned int nmax)
   /* generic test */
   for (prec = p0; prec <= p1; prec++)
     {
-      /* Number of overflow/underflow tests for each precision.
-         Since MPFR uses several algorithms and there may also be
-         early overflow/underflow detection, several tests may be
-         needed to detect a bug. */
-      int test_of = 3, test_uf = 3;
-
       mpfr_set_prec (z, prec);
       mpfr_set_prec (t, prec);
       yprec = prec + 10;
@@ -428,15 +423,11 @@ test_generic (mpfr_prec_t p0, mpfr_prec_t p1, unsigned int nmax)
 #endif
             if (MPFR_IS_PURE_FP (y))
               {
-                e = MPFR_GET_EXP (y);  /* exponent of the result */
-
-                if (test_of > 0 && e - 1 >= emax)  /* overflow test */
+                e = MPFR_GET_EXP (y);
+                if (test_of && e - 1 >= emax)
                   {
                     mpfr_flags_t ex_flags;
 
-                    /* Exponent e of the result > exponents of the inputs;
-                       let's set emax to e - 1, so that one should get an
-                       overflow. */
                     mpfr_set_emax (e - 1);
 #ifdef MPFR_DEBUG_TGENERIC
                     printf ("tgeneric: overflow test (emax = %"
@@ -490,16 +481,12 @@ test_generic (mpfr_prec_t p0, mpfr_prec_t p1, unsigned int nmax)
                         mpfr_dump (w);
                         exit (1);
                       }
-                    test_of--;
+                    test_of = 0;  /* Overflow is tested only once. */
                   }
-
-                if (test_uf > 0 && e + 1 <= emin)  /* underflow test */
+                if (test_uf && e + 1 <= emin)
                   {
                     mpfr_flags_t ex_flags;
 
-                    /* Exponent e of the result < exponents of the inputs;
-                       let's set emin to e + 1, so that one should get an
-                       underflow. */
                     mpfr_set_emin (e + 1);
 #ifdef MPFR_DEBUG_TGENERIC
                     printf ("tgeneric: underflow test (emin = %"
@@ -553,18 +540,15 @@ test_generic (mpfr_prec_t p0, mpfr_prec_t p1, unsigned int nmax)
                         mpfr_dump (w);
                         exit (1);
                       }
-                    test_uf--;
+                    test_uf = 0;  /* Underflow is tested only once. */
                   }
-
                 if (e < emin)
                   emin = e;
                 if (e > emax)
                   emax = e;
-              }  /* MPFR_IS_PURE_FP (y) */
-
+              }
             if (emin > emax)
               emin = emax;  /* case where all values are singular */
-
             /* Consistency test in a reduced exponent range. Doing it
                for the first 10 samples and for prec == p1 (which has
                some special cases) should be sufficient. */
@@ -625,9 +609,8 @@ test_generic (mpfr_prec_t p0, mpfr_prec_t p1, unsigned int nmax)
                     exit (1);
                   }
               }
-
             __gmpfr_flags = oldflags;  /* restore the flags */
-          }  /* tests in a reduced exponent range */
+          }
 
           if (MPFR_IS_SINGULAR (y))
             {

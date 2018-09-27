@@ -1,4 +1,4 @@
-Copyright 2002-2018 Free Software Foundation, Inc.
+Copyright 2002-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -198,7 +198,6 @@ To make a release (for the MPFR team):
 
   4) Update the ChangeLog file with "TZ=UTC svn log -rHEAD:0 -v" in
      UTF-8 locales, e.g. "LC_ALL=en_US.UTF8 TZ=UTC svn log -rHEAD:0 -v".
-     Make sure that all the pending commits have been done.
 
   5) Do a "svn export" of the branch to make sure to start from a clean
      source tree; this also has the advantage (over a checkout) to set
@@ -336,15 +335,6 @@ To make a release (for the MPFR team):
      --enable-debug-prediction, run "timings-mpfr 100", and check that
      the output contains no WARNING.
 
-     For various platforms and compilers, check that:
-       * [make check-gmp-symbols]
-         MPFR does not use GMP internal symbols (unless --with-gmp-build
-         or --enable-gmp-internals has been used);
-       * [make check-exported-symbols]
-         MPFR does not define symbols with a GMP reserved prefix.
-     But note that these rules are not really portable: they may do
-     nothing or might even incorrectly fail on some platforms.
-
   7) For the release itself (not the release candidates), if no problems
      have been found, create a tag with:
        svn cp .../mpfr/branches/x.y .../mpfr/tags/x.y.z
@@ -367,6 +357,7 @@ To make a release (for the MPFR team):
      Update the old current page to point to the new release; see
      examples for 3.0.1 (latest version of the branch) and 3.1.0
      (which is not the latest version of the branch).
+     Make sure that all the pending commits have been done.
      Run the tools/announce-text script to do some checking and get
      the announce text. Edit this text if need be.
      Announce the release in the mpfr-announce, mpfr, gmp-discuss, gcc
@@ -1228,7 +1219,7 @@ of the tests/Makefile.am file.
 
 /* Test file for mpfr_func.
 
-Copyright 2018 Free Software Foundation, Inc.
+Copyright 2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -1516,10 +1507,6 @@ build can be obtained as follows:
 
   nm -u src/.libs/libmpfr.so | sed -n 's/^ *U \(__gmp.*\)/\1/p'
 
-at least under Linux, the library name and the "nm" behavior being
-non-portable (adding the POSIX "-P" option may help, but there are
-still differences between platforms).
-
 Note that this list may depend on various parameters, such as the
 architecture and the compilation options.
 
@@ -1537,12 +1524,6 @@ do
 done
 
 A similar check can be done with "make check-gmp-symbols".
-
-One can also check that MPFR does not define exported symbols with a
-prefix outside "mpfr_" and "__gmpfr_" by using "nm -g" and filtering
-at least the "U" lines. But this can only be a manual check to avoid
-false positives. Checking that a GMP reserved prefix is not used can
-be done automatically, as with "make check-exported-symbols".
 
 ===========================================================================
 

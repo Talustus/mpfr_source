@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_ld and mpfr_get_ld.
 
-Copyright 2002-2018 Free Software Foundation, Inc.
+Copyright 2002-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -31,7 +31,6 @@ static void
 check_gcc33_bug (void)
 {
   volatile long double x;
-
   x = (long double) 9007199254740992.0 + 1.0;
   if (x != 0.0)
     return;  /* OK */
@@ -506,6 +505,16 @@ main (int argc, char *argv[])
   mpfr_t x;
   int i;
   mpfr_exp_t emax;
+#ifdef WITH_FPU_CONTROL
+  fpu_control_t cw;
+
+  if (argc > 1)
+    {
+      cw = strtol(argv[1], NULL, 0);
+      printf ("FPU control word: 0x%x\n", (unsigned int) cw);
+      _FPU_SETCW (cw);
+    }
+#endif
 
   tests_start_mpfr ();
   mpfr_test_init ();

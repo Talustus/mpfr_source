@@ -1,6 +1,6 @@
 /* Test file for mpfr_grandom
 
-Copyright 2011-2018 Free Software Foundation, Inc.
+Copyright 2011-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -32,19 +32,19 @@ test_special (mpfr_prec_t p)
   mpfr_init2 (x, p);
 
   inexact = mpfr_grandom (x, NULL, RANDS, MPFR_RNDN);
-  if (((unsigned int) inexact & 3) == 0)
+  if ((inexact & 3) == 0)
     {
       printf ("Error: mpfr_grandom() returns a zero ternary value.\n");
       exit (1);
     }
-  if (((unsigned int) inexact & (3 << 2)) != 0)
+  if ((inexact & (3 << 2)) != 0)
     {
       printf ("Error: the second ternary value of mpfr_grandom(x, NULL, ...)"
               " must be 0.\n");
       exit (1);
     }
 
-  mpfr_clear (x);
+  mpfr_clear(x);
 }
 
 
@@ -64,8 +64,7 @@ test_grandom (long nbtests, mpfr_prec_t prec, mpfr_rnd_t rnd,
   for (i = 0; i < nbtests; i += 2)
     {
       inexact = mpfr_grandom (t[i], t[i + 1], RANDS, MPFR_RNDN);
-      if (((unsigned int) inexact & 3) == 0 ||
-          ((unsigned int) inexact & (3 << 2)) == 0)
+      if ((inexact & 3) == 0 || (inexact & (3 << 2)) == 0)
         {
           /* one call in the loop pretended to return an exact number! */
           printf ("Error: mpfr_grandom() returns a zero ternary value.\n");
@@ -114,7 +113,6 @@ main (int argc, char *argv[])
 {
   long nbtests;
   int verbose;
-
   tests_start_mpfr ();
 
   verbose = 0;

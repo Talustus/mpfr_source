@@ -1,6 +1,6 @@
 /* Test file for mpfr_div (and some mpfr_div_ui, etc. tests).
 
-Copyright 1999, 2001-2018 Free Software Foundation, Inc.
+Copyright 1999, 2001-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -1519,90 +1519,11 @@ bug20171218 (void)
   mpfr_clear (c);
 }
 
-/* Extended test based on a bug found with flint-arb test suite with a
-   32-bit ABI: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=888459
-   Division of the form: (1 - 2^(-pa)) / (1 - 2^(-pb)).
-   The result is compared to the one obtained by increasing the precision of
-   the divisor (without changing its value, so that both results should be
-   equal). For all of these tests, a failure may occur in r12126 only with
-   pb=GMP_NUMB_BITS and MPFR_RNDN (and some particular values of pa and pc).
-   This bug was introduced by r9086, where mpfr_div uses mpfr_div_ui when
-   the divisor has only one limb.
-*/
-static void
-bug20180126 (void)
-{
-  mpfr_t a, b1, b2, c1, c2;
-  int pa, i, j, pc, sa, sb, r, inex1, inex2;
-
-  for (pa = 100; pa < 800; pa += 11)
-    for (i = 1; i <= 4; i++)
-      for (j = -2; j <= 2; j++)
-        {
-          int pb = GMP_NUMB_BITS * i + j;
-
-          if (pb > pa)
-            continue;
-
-          mpfr_inits2 (pa, a, b1, (mpfr_ptr) 0);
-          mpfr_inits2 (pb, b2, (mpfr_ptr) 0);
-
-          mpfr_set_ui (a, 1, MPFR_RNDN);
-          mpfr_nextbelow (a);                   /* 1 - 2^(-pa) */
-          mpfr_set_ui (b2, 1, MPFR_RNDN);
-          mpfr_nextbelow (b2);                  /* 1 - 2^(-pb) */
-          inex1 = mpfr_set (b1, b2, MPFR_RNDN);
-          MPFR_ASSERTN (inex1 == 0);
-
-          for (pc = 32; pc <= 320; pc += 32)
-            {
-              mpfr_inits2 (pc, c1, c2, (mpfr_ptr) 0);
-
-              for (sa = 0; sa < 2; sa++)
-                {
-                  for (sb = 0; sb < 2; sb++)
-                    {
-                      RND_LOOP_NO_RNDF (r)
-                        {
-                          MPFR_ASSERTN (mpfr_equal_p (b1, b2));
-                          inex1 = mpfr_div (c1, a, b1, (mpfr_rnd_t) r);
-                          inex2 = mpfr_div (c2, a, b2, (mpfr_rnd_t) r);
-
-                          if (! mpfr_equal_p (c1, c2) ||
-                              ! SAME_SIGN (inex1, inex2))
-                            {
-                              printf ("Error in bug20180126 for "
-                                      "pa=%d pb=%d pc=%d sa=%d sb=%d %s\n",
-                                      pa, pb, pc, sa, sb,
-                                      mpfr_print_rnd_mode ((mpfr_rnd_t) r));
-                              printf ("inex1 = %d, c1 = ", inex1);
-                              mpfr_dump (c1);
-                              printf ("inex2 = %d, c2 = ", inex2);
-                              mpfr_dump (c2);
-                              exit (1);
-                            }
-                        }
-
-                      mpfr_neg (b1, b1, MPFR_RNDN);
-                      mpfr_neg (b2, b2, MPFR_RNDN);
-                    }  /* sb */
-
-                  mpfr_neg (a, a, MPFR_RNDN);
-                }  /* sa */
-
-              mpfr_clears (c1, c2, (mpfr_ptr) 0);
-            }  /* pc */
-
-          mpfr_clears (a, b1, b2, (mpfr_ptr) 0);
-        }  /* j */
-}
-
 int
 main (int argc, char *argv[])
 {
   tests_start_mpfr ();
 
-  bug20180126 ();
   bug20171218 ();
   testall_rndf (9);
   test_20170105 ();

@@ -1,6 +1,6 @@
 /* mpfr_ai -- Airy function Ai
 
-Copyright 2010-2018 Free Software Foundation, Inc.
+Copyright 2010-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -576,6 +576,7 @@ mpfr_ai2 (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd)
     } /* End of ZIV loop */
 
   MPFR_ZIV_FREE (loop);
+  MPFR_SAVE_EXPO_FREE (expo);
 
   r = mpfr_set (y, result, rnd);
 
@@ -591,8 +592,7 @@ mpfr_ai2 (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd)
   mpfr_clear (temp1);
   mpfr_clear (temp2);
 
-  MPFR_SAVE_EXPO_FREE (expo);
-  return mpfr_check_range (y, r, rnd);
+  return r;
 }
 
 /* We consider that the boundary between the area where the naive method

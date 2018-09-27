@@ -1,6 +1,6 @@
 /* Test file for mpfr_erandom
 
-Copyright 2011-2018 Free Software Foundation, Inc.
+Copyright 2011-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -105,7 +105,6 @@ main (int argc, char *argv[])
 {
   long nbtests;
   int verbose;
-
   tests_start_mpfr ();
 
   verbose = 0;

@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_float128 and mpfr_get_float128.
 
-Copyright 2012-2018 Free Software Foundation, Inc.
+Copyright 2012-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -327,6 +327,20 @@ check_small (void)
 int
 main (int argc, char *argv[])
 {
+#ifdef WITH_FPU_CONTROL
+  fpu_control_t cw;
+
+  /* cw=895 (0x037f): round to double extended precision
+     cw=639 (0x027f): round to double precision
+     cw=127 (0x007f): round to single precision */
+  if (argc > 1)
+    {
+      cw = strtol(argv[1], NULL, 0);
+      printf ("FPU control word: 0x%x\n", (unsigned int) cw);
+      _FPU_SETCW (cw);
+    }
+#endif
+
   tests_start_mpfr ();
 
   check_special ();
